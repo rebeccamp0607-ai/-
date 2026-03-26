@@ -114,29 +114,34 @@ class DreamscapeEngine:
         obsession_log: list[str],
         world_id: str,
     ) -> str:
-        """
-        使用 GPT-4o 生成梦境叙事（200-300字）。
+        """使用 AI 生成梦境叙事（200-300字）。"""
+        from app.core.ai_client import chat
 
-        叙事要求：
-        - 将执念转化为梦境意象
-        - 带有超现实感
-        - 结尾给出通关条件
-        """
-        # TODO: 接入真实 AI 调用
         obsession_text = "、".join(obsession_log) if obsession_log else "未解的日常压力"
 
-        dream_descriptions = {
-            DreamType.BOSS_FIGHT:   "你面对一个巨大的、面孔模糊的Boss，手中握着你平日不敢说出口的话语……",
-            DreamType.LABYRINTH:    "迷宫的每一个路口都闪烁着金光，那是你曾经错过的机会……",
-            DreamType.TIME_MACHINE: "时光机的仪表盘指向那个你最后悔的瞬间……",
-            DreamType.MIRROR_WORLD: "镜子里的那个你，眼神与你截然相反，他/她想对你说些什么……",
-            DreamType.FREE_FALL:    "你从云端坠落，却发现下方没有地面，只有无尽的……",
-            DreamType.VOID:         "黑暗中，只有一丝微弱的光……",
+        dream_type_desc = {
+            DreamType.BOSS_FIGHT:   "与一个代表压迫你的力量的巨型Boss对决（攻击性宣泄）",
+            DreamType.LABYRINTH:    "在财富与机遇交织的迷宫中寻找出口（重建控制感）",
+            DreamType.TIME_MACHINE: "回到你最后悔的那个关键时刻（接受遗憾）",
+            DreamType.MIRROR_WORLD: "与镜中另一个自我对话（深度自我探索）",
+            DreamType.FREE_FALL:    "从高处坠落，在虚空中寻找立足点（面对失控恐惧）",
+            DreamType.VOID:         "在极度混沌的黑暗中寻找一丝光芒（极限状态）",
         }
 
-        return (
-            f"【梦境降临】\n\n"
-            f"今日执念：{obsession_text}\n\n"
-            f"{dream_descriptions[dream_type]}\n\n"
-            f"【通关目标：直面内心，选择你的应对方式。】"
+        prompt = f"""你是梦境叙事大师。请为玩家生成一段沉浸式梦境叙事。
+
+今日执念：{obsession_text}
+梦境类型：{dream_type_desc[dream_type]}
+
+要求：
+1. 第二人称"你"带入，超现实感，意象丰富
+2. 150-250字
+3. 将执念转化为梦境中的具体意象和挑战
+4. 结尾给出两个通关选择（格式：【直面】xxx / 【逃避】xxx）
+"""
+        return await chat(
+            prompt,
+            system="你是专注于心理意象的梦境叙事大师，语言诗意而震撼。直接输出叙事，不要前缀。",
+            temperature=0.92,
+            max_tokens=400,
         )

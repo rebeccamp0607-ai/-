@@ -15,13 +15,17 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://ming:ming@localhost:5432/ming"
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    # AI Models
-    OPENAI_API_KEY: str = ""
-    GEMINI_API_KEY: str = ""
+    # AI（OpenAI 兼容接口，支持 SiliconFlow / DeepSeek / OpenAI）
+    AI_API_KEY: str = ""
+    AI_BASE_URL: str = "https://api.siliconflow.cn/v1"
+    AI_MODEL_FAST: str = "Qwen/Qwen2.5-7B-Instruct"
+    AI_MODEL_STRONG: str = "Qwen/Qwen2.5-72B-Instruct"
+
+    # Pinecone
     PINECONE_API_KEY: str = ""
     PINECONE_INDEX: str = "ming-destiny-vectors"
 
-    # External Integrations (O2O)
+    # O2O 导出
     NOTION_CLIENT_ID: str = ""
     NOTION_CLIENT_SECRET: str = ""
     GOOGLE_CLIENT_ID: str = ""
