@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ming-void: #0a0a0f;
+  --ming-paper: #e8dfc8;
+  --ming-gold: #c9a84c;
+  --ming-fire: #d44f2a;
+  --ming-water: #2a6bd4;
+  --ming-wood: #2ad44f;
+  --ming-metal: #d4c12a;
+  --ming-earth: #8b6914;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: var(--ming-void);
+  color: var(--ming-paper);
+  font-family: "Noto Serif SC", "Source Han Serif", Georgia, serif;
+}

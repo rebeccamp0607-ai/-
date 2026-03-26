@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# Database
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Python venv
+venv/
+.venv/
+env/
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Pinecone / AI artifacts
+embeddings_cache/
+
+# Next.js
+.next/
+*.tsbuildinfo
+next-env.d.ts
