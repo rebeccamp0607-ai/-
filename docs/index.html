@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="命">
+<title>命 · Project MING</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#080810;--bg2:#0f0f1a;--gold:#c9a84c;--gold2:#e8c96a;--red:#d44f2a;--blue:#2a6bd4;--green:#2ad44f;--purple:#8b5cf6;--text:#e8dfc8;--text2:#a09880;--text3:#5a5240}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,"PingFang SC","Microsoft YaHei",sans-serif;height:100%;overflow:hidden;user-select:none}
+#app{height:100vh;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:opacity .3s,transform .3s;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateX(20px)}
+.btn{display:block;width:100%;padding:16px 20px;border-radius:16px;border:none;font-size:16px;font-weight:700;cursor:pointer;transition:transform .15s,opacity .15s;color:var(--text);text-align:left;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+.btn:active{transform:scale(.96);opacity:.8}
+.btn-gold{background:linear-gradient(135deg,rgba(201,168,76,.3),rgba(201,168,76,.15));border-color:rgba(201,168,76,.4)}
+.btn-purple{background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(139,92,246,.15));border-color:rgba(139,92,246,.4)}
+.btn-teal{background:linear-gradient(135deg,rgba(42,212,79,.2),rgba(42,212,79,.08));border-color:rgba(42,212,79,.3)}
+.btn-red{background:rgba(212,79,42,.2);border-color:rgba(212,79,42,.4)}
+input,textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:14px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none;resize:none}
+input:focus,textarea:focus{border-color:rgba(201,168,76,.5)}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;background:rgba(255,255,255,.08);color:var(--text2)}
+.san-bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.san-fill{height:100%;border-radius:3px;transition:width .6s}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px}
+.loader{display:inline-block;width:20px;height:20px;border:2px solid rgba(201,168,76,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══════════════ 主页 ══════════════ -->
+<div class="screen" id="s-home">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;gap:32px">
+  <div style="text-align:center">
+    <div style="font-size:96px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 60px rgba(201,168,76,.4)">命</div>
+    <div style="font-size:13px;letter-spacing:.4em;color:var(--text2);margin-top:8px">PROJECT MING</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:10px">在三千世界里试错，在唯一现实中觉醒</div>
+  </div>
+  <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px">
+    <button class="btn btn-gold" onclick="showWorldSelect()">
+      <div style="font-size:17px;color:var(--gold2)">开始推演</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px;font-weight:400">选择世界，命运轮转</div>
+    </button>
+    <button class="btn btn-purple" onclick="show('s-genesis')">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:17px;color:#a78bfa">创世神模式</span>
+        <span class="tag" style="background:rgba(139,92,246,.25);color:#a78bfa">AI构建</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px;font-weight:400">描述你的世界，AI实时生成</div>
+    </button>
+  </div>
+</div>
+<div style="text-align:center;padding-bottom:calc(20px + env(safe-area-inset-bottom));font-size:11px;color:var(--text3)">v6.0 · The Awakening Protocol</div>
+</div>
+
+<!-- ══════════════ 世界选择 ══════════════ -->
+<div class="screen hidden" id="s-worlds">
+<div style="padding:60px 20px 20px">
+  <button onclick="show('s-home')" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;margin-bottom:20px;padding:4px 0">← 返回</button>
+  <div style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px">选择世界</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:24px">三条命运之路等你踏入</div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <button class="btn" onclick="startGame('都市','现代都市','资本关系网','人民币','职场人','阶层固化与个人突破','当你盯着第三封未读邮件，窗外霓虹开始亮起……')" style="text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+        <div style="font-size:17px;font-weight:700">现实镜像</div>
+        <span class="tag">都市现实</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">职场、商战、人际。每一个选择都有代价。</div>
+    </button>
+    <button class="btn" onclick="startGame('仙界','灵气复苏大陆','宗门体系','灵石','宗门弟子','天道轮回与资源争夺','守藏阁最深处，封印的古籍正在发光……')" style="text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+        <div style="font-size:17px;font-weight:700">修仙长生</div>
+        <span class="tag">东方玄幻</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">宗门、秘境、飞升。道路漫长，险阻丛生。</div>
+    </button>
+    <button class="btn" onclick="startGame('废土','新上海废土区','企业联合政府','数据币','底层黑客','人性与机械化的边界','你的神经接口欠费第三天，安保AI已标记你的生物特征……')" style="text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+        <div style="font-size:17px;font-weight:700">赛博废土</div>
+        <span class="tag">赛博朋克</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">机械、黑客、资本。人性在钢铁中挣扎。</div>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ 创世神 ══════════════ -->
+<div class="screen hidden" id="s-genesis">
+<div style="padding:60px 20px 20px">
+  <button onclick="show('s-home')" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;margin-bottom:20px;padding:4px 0">← 返回</button>
+  <div style="font-size:22px;font-weight:700;margin-bottom:6px">创世神模式</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:20px">用语言描述你的世界，AI实时构建</div>
+  <textarea id="genesis-input" rows="4" placeholder="例如：被猫统治的蒸汽朋克世界，货币是小鱼干，我是流浪铲屎官…" style="margin-bottom:16px"></textarea>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:10px">或者试试：</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px">
+    <button class="btn" style="font-size:13px;padding:12px 14px;font-weight:400" onclick="document.getElementById('genesis-input').value=this.dataset.v" data-v="克苏鲁版大明朝，触手神明是皇帝，我是钦天监小官">「克苏鲁版大明朝」</button>
+    <button class="btn" style="font-size:13px;padding:12px 14px;font-weight:400" onclick="document.getElementById('genesis-input').value=this.dataset.v" data-v="外卖骑手是最强战士，快递驿站是宗门，我是新人骑手">「外卖骑手宗门世界」</button>
+    <button class="btn" style="font-size:13px;padding:12px 14px;font-weight:400" onclick="document.getElementById('genesis-input').value=this.dataset.v" data-v="植物统治世界，阳光是货币，我是一株刚发芽的蒲公英">「植物统治世界」</button>
+  </div>
+  <div id="genesis-loading" style="display:none;text-align:center;padding:20px">
+    <div class="loader"></div>
+    <div style="font-size:13px;color:var(--text2);margin-top:12px">AI 正在构建世界法则…<br><span style="color:var(--text3);font-size:11px">约需 15-30 秒</span></div>
+  </div>
+  <button id="genesis-btn" class="btn btn-purple" onclick="doGenesis()" style="font-size:17px;text-align:center;padding:18px">召唤世界 →</button>
+</div>
+</div>
+
+<!-- ══════════════ 游戏主界面 ══════════════ -->
+<div class="screen hidden" id="s-game">
+<!-- 顶部状态条 -->
+<div id="statusbar" style="position:sticky;top:0;z-index:10;background:rgba(8,8,16,.9);backdrop-filter:blur(12px);padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;border-bottom:1px solid rgba(255,255,255,.06)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <div>
+      <div id="world-name-bar" style="font-size:11px;color:var(--text3)">世界</div>
+      <div id="day-bar" style="font-size:15px;font-weight:700">Day 1</div>
+    </div>
+    <div style="flex:1;margin:0 14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--text3)">心力 San</span>
+        <span id="san-num" style="font-size:11px;font-weight:700;color:var(--gold)">100</span>
+      </div>
+      <div class="san-bar"><div id="san-fill" class="san-fill" style="width:100%;background:var(--gold)"></div></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:11px;color:var(--text3)">认知点</div>
+      <div id="cog-bar" style="font-size:15px;font-weight:700;color:var(--gold)">0</div>
+    </div>
+  </div>
+</div>
+<!-- 游戏内容 -->
+<div style="padding:16px 20px 100px" id="game-content"></div>
+</div>
+
+<!-- ══════════════ 梦境 ══════════════ -->
+<div class="screen hidden" id="s-dream">
+<div style="min-height:100vh;background:linear-gradient(180deg,#040410 0%,#08081e 100%);padding:calc(env(safe-area-inset-top)+40px) 24px calc(env(safe-area-inset-bottom)+40px)">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-size:40px;margin-bottom:6px">🌙</div>
+    <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,.6)">夜幕降临</div>
+    <div style="font-size:12px;color:rgba(139,92,246,.6);margin-top:4px" id="dream-type-label">梦境</div>
+  </div>
+  <div id="dream-content" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.15);border-radius:20px;padding:20px;margin-bottom:24px;font-size:14px;color:rgba(255,255,255,.75);line-height:1.9"></div>
+  <div id="dream-choices"></div>
+</div>
+</div>
+
+<!-- ══════════════ 结局 ══════════════ -->
+<div class="screen hidden" id="s-end">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
+  <div style="font-size:60px;margin-bottom:16px" id="end-icon">💀</div>
+  <div style="font-size:24px;font-weight:700;margin-bottom:10px" id="end-title">命运终结</div>
+  <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:32px" id="end-msg">San 值归零。这一世的命运，就此落幕。</div>
+  <div id="end-stats" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;width:100%;max-width:300px;margin-bottom:24px;text-align:left;font-size:14px;color:var(--text2);line-height:2"></div>
+  <button class="btn btn-gold" onclick="resetGame()" style="text-align:center;max-width:300px">再来一局 →</button>
+</div>
+</div>
+
+</div>
+<script>
+// ═══════════════════════════════════════
+// 游戏状态
+// ═══════════════════════════════════════
+let G = {
+  worldShort:'', worldName:'', power:'', currency:'', role:'', conflict:'', opening:'',
+  day:1, san:100, cog:0, obsessions:[],
+  events:[], eventIdx:0,
+  aiKey:'sk-b1e142437eed43feaa259e43b5f03250'
+};
+
+// ═══════════════════════════════════════
+// 屏幕切换
+// ═══════════════════════════════════════
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════
+// AI 调用
+// ═══════════════════════════════════════
+async function callAI(userPrompt, sys='你是命运裁判，精通东方命理与沉浸式叙事。回答简洁有力。', maxTokens=400){
+  try{
+    const r = await fetch('https://api.siliconflow.cn/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+G.aiKey},
+      body:JSON.stringify({
+        model:'Qwen/Qwen2.5-72B-Instruct',
+        messages:[{role:'system',content:sys},{role:'user',content:userPrompt}],
+        max_tokens:maxTokens, temperature:0.88
+      })
+    });
+    const d = await r.json();
+    return d.choices?.[0]?.message?.content || '';
+  }catch(e){ return ''; }
+}
+
+// ═══════════════════════════════════════
+// 内置事件库
+// ═══════════════════════════════════════
+const EVENTS = {
+  都市:[
+    {id:'e1',title:'猎头的消息',body:'一个陌生号码发来微信：「薪资翻倍，72小时内决定。」你刚入职8个月，试用期刚过。',
+     opts:[{t:'赴约谈',s:5,c:8,obs:''},{t:'婉言谢绝',s:3,c:3,obs:''}]},
+    {id:'e2',title:'同事甩锅',body:'会议上，同事把延误责任全推给了你。领导盯着你，所有人等你开口。',
+     opts:[{t:'当场澄清',s:10,c:12,obs:''},{t:'沉默忍耐',s:-12,c:2,obs:'被冤枉却没还手'}]},
+    {id:'e3',title:'老友借款',body:'认识十年的朋友说家里急用，要借五万。你知道他最近在搞一个"稳赚不赔"的项目。',
+     opts:[{t:'借，朋友义气',s:-8,c:-5,obs:'钱可能打水漂'},{t:'拒绝，保护自己',s:8,c:10,obs:''}]},
+    {id:'e4',title:'深夜来电',body:'凌晨两点，前任打来电话。声音哽咽："我现在很难过，你能来吗？"',
+     opts:[{t:'去陪他/她',s:-5,c:5,obs:''},{t:'挂掉，去睡觉',s:5,c:5,obs:''}]},
+    {id:'e5',title:'投资机会',body:'朋友拉你进群：某个项目明天上线，说是内部消息，已经有人赚了三倍。',
+     opts:[{t:'跟投一把',s:-10,c:-8,obs:'冲动投资了'},{t:'不参与',s:5,c:8,obs:''}]},
+    {id:'e6',title:'加班还是放弃',body:'项目明天deadline，你已经连续加班五天。今晚还有三小时的活没完成。',
+     opts:[{t:'咬牙干完',s:-8,c:15,obs:''},{t:'提交一半，去睡',s:5,c:-5,obs:'工作没完成'}]}
+  ],
+  仙界:[
+    {id:'f1',title:'禁书的光芒',body:'守藏阁深处，封印古籍散发妖异光芒。师父说过：任何人不得触碰。守阁老前辈去茅房了。',
+     opts:[{t:'趁机翻看一页',s:10,c:20,obs:''},{t:'遵守门规离开',s:5,c:3,obs:''}]},
+    {id:'f2',title:'师兄的丹药',body:'大师兄让你试一颗来路不明的"突破丹"，说是他自己炼的。',
+     opts:[{t:'服下丹药',s:-10,c:15,obs:'丹药副作用'},{t:'婉言谢绝',s:5,c:5,obs:''}]},
+    {id:'f3',title:'秘境入口',body:'山谷深处发现一个微弱的空间裂缝。进去可能有奇遇，也可能回不来。',
+     opts:[{t:'独自探索',s:8,c:25,obs:''},{t:'回去禀报宗门',s:3,c:8,obs:''}]},
+    {id:'f4',title:'同门结怨',body:'同门师弟在外宣称你偷了他的修炼心法，大半个宗门都听到了流言。',
+     opts:[{t:'公开对质',s:10,c:10,obs:''},{t:'默默忍让',s:-10,c:2,obs:'被污蔑没反击'}]},
+    {id:'f5',title:'落难散修',body:'一位受伤的散修恳求你分一颗疗伤丹。你只有两颗，此去还有一段险路。',
+     opts:[{t:'给他一颗',s:12,c:10,obs:''},{t:'拒绝，留着自用',s:-5,c:2,obs:''}]},
+    {id:'f6',title:'宗门大比',body:'三年一度的宗门大比开始了。你的实力在中游，若认真备战有机会入前三。',
+     opts:[{t:'拼尽全力参赛',s:8,c:20,obs:''},{t:'保存实力观望',s:3,c:5,obs:''}]}
+  ],
+  废土:[
+    {id:'c1',title:'神秘芯片',body:'一个蒙面人在交易站留下一块芯片。初步扫描显示：里面有核心区门禁代码。',
+     opts:[{t:'深度解密',s:-5,c:20,obs:''},{t:'原封卖掉',s:5,c:8,obs:''}]},
+    {id:'c2',title:'安保盘查',body:'企业区安保机器人扫描了你的生物特征，手放在了武器上。',
+     opts:[{t:'配合检查',s:-8,c:3,obs:'被搜身了'},{t:'立刻跑路',s:5,c:10,obs:''}]},
+    {id:'c3',title:'义体升级',body:'黑市有人卖最新款神经接口，性能是你现在的三倍，但来源不明，可能有后门。',
+     opts:[{t:'买并安装',s:5,c:15,obs:''},{t:'不冒险',s:3,c:5,obs:''}]},
+    {id:'c4',title:'地下组织',body:'一个自称"自由意志"的地下组织找到你，想让你帮他们入侵企业数据库。',
+     opts:[{t:'加入他们',s:8,c:20,obs:''},{t:'拒绝，太危险',s:5,c:3,obs:''}]},
+    {id:'c5',title:'伤员求助',body:'废墟里一个义体损坏的孩子拦住你，她的电力只剩20%。',
+     opts:[{t:'分电池给她',s:15,c:8,obs:''},{t:'继续赶路',s:-8,c:2,obs:'没帮那个孩子'}]},
+    {id:'c6',title:'数据交易',body:'有人要用三个月生活费换你手里一段加密数据。你不知道数据内容。',
+     opts:[{t:'成交',s:3,c:12,obs:''},{t:'拒绝',s:5,c:5,obs:''}]}
+  ]
+};
+
+// ═══════════════════════════════════════
+// 开始游戏（内置世界）
+// ═══════════════════════════════════════
+function startGame(short, name, power, currency, role, conflict, opening){
+  G.worldShort=short; G.worldName=name; G.power=power;
+  G.currency=currency; G.role=role; G.conflict=conflict;
+  G.opening=opening; G.day=1; G.san=100; G.cog=0;
+  G.obsessions=[]; G.eventIdx=0;
+  G.events = [...(EVENTS[short]||EVENTS['都市'])];
+  show('s-game');
+  updateBar();
+  renderEvent();
+}
+
+// ═══════════════════════════════════════
+// 创世神模式
+// ═══════════════════════════════════════
+async function doGenesis(){
+  const prompt = document.getElementById('genesis-input').value.trim();
+  if(!prompt) return;
+  document.getElementById('genesis-btn').style.display='none';
+  document.getElementById('genesis-loading').style.display='block';
+  const sys = '你是 Project MING 的创世引擎。根据玩家的世界描述，输出 JSON（不要有任何多余内容）。';
+  const userP = `玩家想要的世界：${prompt}\n\n请输出以下 JSON：\n{"worldName":"世界名称(4字内)","power":"统治力量(8字内)","currency":"货币单位(4字内)","role":"玩家身份(8字内)","conflict":"核心矛盾(15字内)","opening":"开场白(80字内，第二人称，末尾省略号)","events":[{"title":"事件名(8字内)","body":"事件描述(60字内)","opt1":"选项A(6字内)","opt2":"选项B(6字内)"},{"title":"...","body":"...","opt1":"...","opt2":"..."},{"title":"...","body":"...","opt1":"...","opt2":"..."}]}`;
+  const raw = await callAI(userP, sys, 800);
+  document.getElementById('genesis-loading').style.display='none';
+  document.getElementById('genesis-btn').style.display='block';
+  try{
+    const j = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const evts = (j.events||[]).map((e,i)=>({
+      id:'g'+i, title:e.title||'神秘事件', body:e.body||'命运面临抉择',
+      opts:[{t:e.opt1||'接受',s:Math.floor(Math.random()*20-5),c:Math.floor(Math.random()*15+3),obs:''},
+            {t:e.opt2||'拒绝',s:Math.floor(Math.random()*20-10),c:Math.floor(Math.random()*10),obs:''}]
+    }));
+    // 用标准事件库补足至6个
+    const fallback = [...EVENTS['都市']];
+    while(evts.length<6) evts.push(fallback[evts.length%fallback.length]);
+    G.worldShort='创世'; G.worldName=j.worldName||'新世界';
+    G.power=j.power||''; G.currency=j.currency||'';
+    G.role=j.role||'旅行者'; G.conflict=j.conflict||'';
+    G.opening=j.opening||'命运的齿轮开始转动……';
+    G.day=1; G.san=100; G.cog=0; G.obsessions=[]; G.eventIdx=0;
+    G.events=evts;
+    show('s-game'); updateBar(); renderEvent();
+  }catch{
+    document.getElementById('genesis-input').value='';
+    document.getElementById('genesis-input').placeholder='解析失败，请换个描述再试';
+  }
+}
+
+// ═══════════════════════════════════════
+// 状态条更新
+// ═══════════════════════════════════════
+function updateBar(){
+  document.getElementById('world-name-bar').textContent = G.worldName;
+  document.getElementById('day-bar').textContent = 'Day '+G.day;
+  document.getElementById('san-num').textContent = G.san;
+  document.getElementById('cog-bar').textContent = G.cog;
+  const fill = document.getElementById('san-fill');
+  fill.style.width = G.san+'%';
+  fill.style.background = G.san>60?'#c9a84c':G.san>30?'#f59e0b':'#ef4444';
+  document.getElementById('san-num').style.color = G.san>60?'var(--gold)':G.san>30?'#f59e0b':'#ef4444';
+}
+
+// ═══════════════════════════════════════
+// 渲染事件
+// ═══════════════════════════════════════
+function renderEvent(){
+  const ev = G.events[G.eventIdx % G.events.length];
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `<div class="fade-in">
+    <div class="card" style="margin-bottom:16px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:10px">${ev.title}</div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.8">${ev.body}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${ev.opts.map((o,i)=>`<button class="btn" onclick="chooseOpt(${i})" id="opt${i}"><span style="color:var(--gold);margin-right:6px">${['A','B'][i]}</span>${o.t}</button>`).join('')}
+      <button class="btn btn-purple" onclick="showFreeWill()" style="text-align:center;font-size:14px;padding:14px">✦ 自由意志（自己输入）</button>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// 选择选项
+// ═══════════════════════════════════════
+function chooseOpt(i){
+  const ev = G.events[G.eventIdx % G.events.length];
+  const opt = ev.opts[i];
+  applyChoice(opt.t, opt.s, opt.c, opt.obs, null);
+}
+
+async function applyChoice(label, sanD, cogD, obs, aiNarrative){
+  G.san = Math.max(0, Math.min(100, G.san+sanD));
+  G.cog = Math.max(0, G.cog+cogD);
+  if(obs) G.obsessions = [...G.obsessions.slice(-3), obs];
+  updateBar();
+  const gc = document.getElementById('game-content');
+  const ev = G.events[G.eventIdx % G.events.length];
+  const sanTxt = sanD>=0?`<span style="color:#4ade80">San +${sanD}</span>`:`<span style="color:#f87171">San ${sanD}</span>`;
+  const cogTxt = cogD>=0?`<span style="color:var(--gold)">认知 +${cogD}</span>`:`<span style="color:#f87171">认知 ${cogD}</span>`;
+  let narrative = aiNarrative;
+  if(!narrative){
+    // 根据选择生成简短后果
+    const fallbacks = {
+      '赴约谈':'你赴约了，对方开价诱人，却要求立刻辞职……',
+      '婉言谢绝':'你拒绝了。也许这是对的选择，也许……',
+      '当场澄清':'你开口了，有条有理。气氛很僵，但事实摆在那里。',
+      '沉默忍耐':'你选择了沉默。愤怒在胸腔里滚烫。今晚注定难眠。',
+      '借，朋友义气':'你转了钱。他说会尽快还，你点了点头。',
+      '拒绝，保护自己':'你拒绝了。对方沉默，你也沉默。关系开始微妙。',
+    };
+    narrative = fallbacks[label] || `你选择了「${label}」。命运的齿轮再转一格。`;
+  }
+  gc.innerHTML = `<div class="fade-in">
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:13px;color:var(--text3);margin-bottom:6px">你的选择：${label}</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.8">${narrative}</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;font-size:13px">${sanTxt} ${cogTxt}</div>
+    ${G.san<=0?`<button class="btn btn-red" onclick="endGame()" style="text-align:center;font-size:16px">命运终结…</button>`
+    :`<button class="btn btn-gold" onclick="nextDay()" style="text-align:center;font-size:16px">${G.san<40?'夜幕降临 🌙':'Day '+(G.day+1)+' →'}</button>`}
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// 自由意志
+// ═══════════════════════════════════════
+function showFreeWill(){
+  const ev = G.events[G.eventIdx % G.events.length];
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `<div class="fade-in">
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px">${ev.title}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">${ev.body}</div>
+    </div>
+    <textarea id="free-input" rows="3" placeholder="描述你的方案，AI实时裁判结果…" style="margin-bottom:12px"></textarea>
+    <div id="free-loading" style="display:none;text-align:center;padding:16px"><div class="loader"></div><div style="font-size:13px;color:var(--text2);margin-top:10px">AI 裁判中…</div></div>
+    <button class="btn btn-purple" id="free-btn" onclick="submitFreeWill()" style="text-align:center;font-size:16px;margin-bottom:10px">提交给命运裁判</button>
+    <button class="btn" onclick="renderEvent()" style="text-align:center;font-size:14px;color:var(--text2)">返回选项</button>
+  </div>`;
+}
+
+async function submitFreeWill(){
+  const input = document.getElementById('free-input').value.trim();
+  if(!input) return;
+  document.getElementById('free-btn').style.display='none';
+  document.getElementById('free-loading').style.display='block';
+  const ev = G.events[G.eventIdx % G.events.length];
+  const p = `世界：${G.worldName}（${G.worldShort}风格）\n当前场景：${ev.title}—${ev.body}\n玩家的方案："${input}"\n\n请以命运裁判身份输出 JSON（不要有其他内容）：\n{"feasibility":0到100的整数,"success":0到100的整数,"narrative":"80字内的结果叙事（直接描述后果，不要解释）","san_delta":-20到15的整数,"cog_delta":0到25的整数,"obs":"若结果不好则写一个10字内的执念，否则写空字符串"}`;
+  const raw = await callAI(p, '你是严肃的命运裁判AI，直接输出JSON。', 300);
+  document.getElementById('free-loading').style.display='none';
+  try{
+    const j = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const label = `[自由意志] ${input}`;
+    const narrative = `可行性 ${j.feasibility}% · 成功率 ${j.success}%\n\n${j.narrative}`;
+    await applyChoice(label, j.san_delta||0, j.cog_delta||0, j.obs||'', narrative);
+  }catch{
+    await applyChoice(`[自由意志] ${input}`, -5, 5, '', '命运难以预测，但你走出了自己的路。');
+  }
+}
+
+// ═══════════════════════════════════════
+// 下一天
+// ═══════════════════════════════════════
+function nextDay(){
+  G.day++; G.eventIdx++;
+  updateBar();
+  if(G.san < 40){ enterDream(); return; }
+  renderEvent();
+}
+
+// ═══════════════════════════════════════
+// 梦境
+// ═══════════════════════════════════════
+async function enterDream(){
+  show('s-dream');
+  document.getElementById('dream-content').innerHTML = '<div style="text-align:center"><div class="loader"></div><div style="font-size:13px;color:rgba(139,92,246,.6);margin-top:12px">正在潜入潜意识…</div></div>';
+  document.getElementById('dream-choices').innerHTML = '';
+  const obs = G.obsessions.length ? G.obsessions.join('、') : '未解的压力';
+  const p = `玩家今日执念：${obs}\n世界：${G.worldName}\nSan值：${G.san}/100\n\n请生成一段梦境叙事（120字内，第二人称，超现实意象，结尾用"【直面】xxx / 【逃避】xxx"给出两个选择，每个选择5字内）`;
+  const raw = await callAI(p, '你是梦境叙事大师，语言诗意震撼。', 350);
+  let narrative = raw || '黑暗中，只有一丝微弱的光……\n\n【直面】走向光明 / 【逃避】留在黑暗';
+  // 解析选择
+  const m = narrative.match(/【直面】(.+?)\s*\/\s*【逃避】(.+?)$/s);
+  const directTxt = m ? m[1].trim() : '走向光明';
+  const escapeTxt = m ? m[2].trim() : '留在黑暗';
+  const bodyTxt = m ? narrative.slice(0, narrative.indexOf('【直面】')).trim() : narrative;
+  document.getElementById('dream-type-label').textContent = obs ? `执念：${obs}` : '梦境';
+  document.getElementById('dream-content').innerHTML = bodyTxt.replace(/\n/g,'<br>');
+  document.getElementById('dream-choices').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <button class="btn btn-teal" onclick="resolveDream('direct','${directTxt.replace(/'/g,"\\'")}')">【直面】${directTxt}</button>
+      <button class="btn" onclick="resolveDream('escape','${escapeTxt.replace(/'/g,"\\'")}')">【逃避】${escapeTxt}</button>
+    </div>`;
+}
+
+function resolveDream(choice, label){
+  const reward = choice==='direct' ? 25 : 12;
+  G.san = Math.min(100, G.san+reward);
+  G.obsessions = [];
+  updateBar();
+  document.getElementById('dream-choices').innerHTML = `
+    <div class="card" style="text-align:center;margin-bottom:16px">
+      <div style="font-size:24px;margin-bottom:8px">${choice==='direct'?'✦':'○'}</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.7)">${choice==='direct'?'你直面了内心的阴影。':'你选择了暂时的回避。'}</div>
+      <div style="font-size:13px;color:rgba(139,92,246,.7);margin-top:6px">San +${reward}</div>
+    </div>
+    <button class="btn btn-gold" onclick="wakeUp()" style="text-align:center;font-size:16px">破晓，继续 →</button>`;
+}
+
+function wakeUp(){
+  show('s-game'); updateBar(); renderEvent();
+}
+
+// ═══════════════════════════════════════
+// 世界选择
+// ═══════════════════════════════════════
+function showWorldSelect(){ show('s-worlds'); }
+
+// ═══════════════════════════════════════
+// 游戏结束
+// ═══════════════════════════════════════
+function endGame(){
+  show('s-end');
+  document.getElementById('end-stats').innerHTML =
+    `世界：${G.worldName}<br>坚持了 ${G.day} 天<br>认知点：${G.cog}<br>最后 San 值：${G.san}`;
+}
+
+function resetGame(){
+  G = {...G, day:1, san:100, cog:0, obsessions:[], eventIdx:0};
+  show('s-home');
+}
+
+// ═══════════════════════════════════════
+// 初始化
+// ═══════════════════════════════════════
+show('s-home');
+</script>
+</body>
+</html>
