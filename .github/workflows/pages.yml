@@ -1,7 +1,9 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [claude/project-ming-v6-design-Q2gM5]
+    branches:
+      - claude/project-ming-v6-design-Q2gM5
+      - claude/bizbrain-mvp-JfI0E
     paths: [docs/**]
 permissions:
   contents: read
