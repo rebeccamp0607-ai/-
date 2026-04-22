@@ -1,0 +1,90 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": { "navigationBarTitleText": "", "navigationStyle": "custom" }
+    },
+    {
+      "path": "pages/onboarding/welcome",
+      "style": { "navigationBarTitleText": "", "navigationStyle": "custom" }
+    },
+    {
+      "path": "pages/onboarding/assessment",
+      "style": { "navigationBarTitleText": "思维测评", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/assessment-result/index",
+      "style": { "navigationBarTitleText": "", "navigationStyle": "custom" }
+    },
+    {
+      "path": "pages/map/index",
+      "style": { "navigationBarTitleText": "商业地图", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/challenge/index",
+      "style": { "navigationBarTitleText": "挑战关卡", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/challenge/complete",
+      "style": { "navigationBarTitleText": "", "navigationStyle": "custom" }
+    },
+    {
+      "path": "pages/discover/index",
+      "style": { "navigationBarTitleText": "发现", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/dictionary/index",
+      "style": { "navigationBarTitleText": "商业词典", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/dictionary/entry",
+      "style": { "navigationBarTitleText": "词条详情", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": { "navigationBarTitleText": "我的", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": { "navigationBarTitleText": "登录", "navigationBarBackgroundColor": "#0a0a14", "navigationBarTextStyle": "white" }
+    }
+  ],
+  "tabBar": {
+    "color": "#8a8a9a",
+    "selectedColor": "#6c63ff",
+    "backgroundColor": "#0f0f1a",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/map/index",
+        "text": "地图",
+        "iconPath": "static/icons/tabbar/map.png",
+        "selectedIconPath": "static/icons/tabbar/map-active.png"
+      },
+      {
+        "pagePath": "pages/discover/index",
+        "text": "发现",
+        "iconPath": "static/icons/tabbar/discover.png",
+        "selectedIconPath": "static/icons/tabbar/discover-active.png"
+      },
+      {
+        "pagePath": "pages/dictionary/index",
+        "text": "词典",
+        "iconPath": "static/icons/tabbar/dict.png",
+        "selectedIconPath": "static/icons/tabbar/dict-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "static/icons/tabbar/profile.png",
+        "selectedIconPath": "static/icons/tabbar/profile-active.png"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "BizBrain",
+    "navigationBarBackgroundColor": "#0a0a14",
+    "backgroundColor": "#0a0a14"
+  }
+}
